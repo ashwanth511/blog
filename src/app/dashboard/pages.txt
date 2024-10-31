@@ -1,0 +1,120 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { client } from '@/sanity/lib/client'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
+
+interface Article {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  publishedAt: string;
+  mainImage?: any;
+  categories?: string[];
+  author?: {
+    _id: string;
+    name?: string;
+  };
+}
+
+export default function DashboardPage() {
+  const [articles, setArticles] = useState<Article[]>([])
+  const { user } = useAuth()
+  const { toast } = useToast()
+
+  const fetchUserArticles = async () => {
+    if (!user?._id) {
+      console.log('No user ID available')
+      return
+    }
+
+    const query = `*[_type == "post" && author._ref == $userId] {
+      _id,
+      title,
+      slug,
+      publishedAt,
+      mainImage,
+      "categories": categories[]->title,
+      author->
+    }`
+
+    console.log('Querying with user ID:', user._id)
+    const posts = await client.fetch(query, { userId: user._id })
+    console.log('Fetched posts:', posts)
+    setArticles(posts)
+  }
+
+  useEffect(() => {
+    console.log('Current user:', user)
+    if (user) {
+      fetchUserArticles()
+    }
+  }, [user])
+
+  const handleDelete = async (articleId: string) => {
+    try {
+      await client.delete(articleId)
+      await fetchUserArticles() // Refresh the list
+      toast({
+        title: "Success",
+        description: "Article deleted successfully",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete article",
+        variant: "destructive"
+      })
+    }
+  }
+
+  return (
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Your Articles</h1>
+        <Link href="/articles/write">
+          <Button>Write New Article</Button>
+        </Link>
+      </div>
+      
+      <div className="grid gap-6">
+        {articles.map((article: any) => (
+          <Card key={article._id}>
+            <CardHeader>
+              <CardTitle>{article.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-500">
+                Published: {new Date(article.publishedAt).toISOString().split('T')[0]}
+              </p>
+              {article.categories && (
+                <div className="flex gap-2 mt-2">
+                  {article.categories.map((category: string) => (
+                    <span key={category} className="bg-gray-100 px-2 py-1 rounded-md text-sm">
+                      {category}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4 flex gap-2">
+                <Link href={`/articles/${article.slug.current}`}>
+                  <Button variant="outline">View</Button>
+                </Link>
+                <Button 
+                  variant="destructive" 
+                  onClick={() => handleDelete(article._id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
