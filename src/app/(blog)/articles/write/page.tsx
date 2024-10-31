@@ -39,10 +39,9 @@ export default function WritePage() {
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [categories, setCategories] = useState<Category[]>([])
-  const [selectedCategories, setSelectedCategories] = useState([])
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("")
-const [IsLoading,setIsLoading]=useState(true)
+const [IsLoading,setIsLoading]=useState(false)
 
   useEffect(() => {
     const loadCategories = async () => {
