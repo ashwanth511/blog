@@ -22,13 +22,14 @@ async function getArticle(slug: string) {
 
 
 
-type PageProps={
+type Props={
   params:{
     slug:string
   }
+  searchParams:{[key:string]:string|string[]|undefined}
 }
 
-export default async function ArticlePage({ params }: PageProps) {
+export default async function ArticlePage({ params ,searchParams}: Props) {
   const supabase = createServerComponentClient({ cookies })
   const article = await getArticle(params.slug)
   
