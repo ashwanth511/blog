@@ -23,17 +23,24 @@ async function getArticle(slug: string) {
 
 
 
-interface PageProps{
+export interface PageProps{
   params: { slug: string }
-  searchParams: Record<string, string | string[] | undefined>
+  searchParams?: { [key: string]: string | string[] | undefined }
 
 
 }
 
-export default async function ArticlePage({ params ,searchParams}: PageProps) {
+export default async function ArticlePage({ params}: PageProps) {
   const supabase = createServerComponentClient({ cookies })
   const article = await getArticle(params.slug)
-  
+  if (!article || !article.author) {
+    return (
+      <div className="container mx-auto py-8 text-center">
+        <h1 className="text-2xl font-bold">Article not found</h1>
+        <p>The article you're looking for doesn't exist or has been removed.</p>
+      </div>
+    )
+  }
   // Get likes from Supabase
   const { data: likes } = await supabase
     .from('article_likes')
