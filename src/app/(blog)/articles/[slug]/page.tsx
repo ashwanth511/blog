@@ -3,6 +3,7 @@ import { urlFor } from '@/sanity/lib/image'
 import { PortableText } from '@portabletext/react'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { Metadata } from 'next'
 
 
 async function getArticle(slug: string) {
@@ -22,14 +23,14 @@ async function getArticle(slug: string) {
 
 
 
-type Props={
-  params:{
-    slug:string
-  }
-  searchParams:{[key:string]:string|string[]|undefined}
+interface PageProps{
+  params: { slug: string }
+  searchParams: Record<string, string | string[] | undefined>
+
+
 }
 
-export default async function ArticlePage({ params ,searchParams}: Props) {
+export default async function ArticlePage({ params ,searchParams}: PageProps) {
   const supabase = createServerComponentClient({ cookies })
   const article = await getArticle(params.slug)
   
