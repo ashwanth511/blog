@@ -4,6 +4,7 @@ import { PortableText } from '@portabletext/react'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
+
 async function getArticle(slug: string) {
   const query = `*[_type == "post" && slug.current == $slug][0]{
     title,
@@ -19,7 +20,15 @@ async function getArticle(slug: string) {
   return client.fetch(query, { slug })
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
+
+
+type PageProps={
+  params:{
+    slug:string
+  }
+}
+
+export default async function ArticlePage({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies })
   const article = await getArticle(params.slug)
   
