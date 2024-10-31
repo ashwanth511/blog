@@ -12,15 +12,15 @@ type Profile = {
   name: string;
   email: string;
 }
-
+type UserWithProfile = User & { profile: Profile }
 type AuthContextType = {
-  user: (User & { profile: Profile }) | null;
+  user: UserWithProfile | null;
   login: (email: string, password: string) => Promise<{
-    data: { user: (User & { profile: any }) | null } | null;
+    data: { user: UserWithProfile | null } | null;
     error: AuthError | null;
   }>;
   signup: (email: string, password: string, name: string) => Promise<{
-    data: { user: (User & { profile: any }) | null } | null;
+    data: { user: UserWithProfile | null } | null;
     error: AuthError | null;
   }>;
   logout: () => Promise<void>;
