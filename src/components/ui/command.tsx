@@ -7,10 +7,14 @@ import { Command as CommandPrimitive } from "cmdk"
 
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-
+export interface CommandProps {
+  // Adding example props
+  variant?: 'default' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
+}
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive>
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive> & CommandProps
 >(({ className, ...props }, ref) => (
   <CommandPrimitive
     ref={ref}
