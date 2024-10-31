@@ -58,11 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
 
-
-
-
-
-
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -132,43 +127,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // const login = async (email: string, password: string) => {
-  //   setLoading(true)
-  //   try {
-  //     const { data, error } = await supabase.auth.signInWithPassword({
-  //       email,
-  //       password
-  //     })
-
-  //     if (error) throw error
-
-  //     const { data: profileData } = await supabase
-  //       .from('profiles')
-  //       .select('*')
-  //       .eq('id', data.user.id)
-  //       .single()
-
-  //     const userWithProfile = {...data.user, profile: profileData}
-  //     setUser(userWithProfile)
-
-  //     toast({
-  //       title: "Success",
-  //       description: "Logged in successfully",
-  //     })
-
-  //     router.push('/dashboard')
-  //     return { data: { user: userWithProfile }, error: null }
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error",
-  //       description: (error as Error).message,
-  //       variant: "destructive"
-  //     })
-  //     return { data: null, error: error as AuthError }
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
 
   const signup = async (email: string, password: string, name: string) => {
     try {
