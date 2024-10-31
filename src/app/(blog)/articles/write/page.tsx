@@ -41,7 +41,7 @@ export default function WritePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("")
-const [IsLoading,setIsLoading]=useState(false)
+const [IsLoading]=useState(false)
 
   useEffect(() => {
     const loadCategories = async () => {

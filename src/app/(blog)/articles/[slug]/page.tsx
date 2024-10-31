@@ -37,7 +37,8 @@ export default async function ArticlePage({ params}: PageProps) {
     return (
       <div className="container mx-auto py-8 text-center">
         <h1 className="text-2xl font-bold">Article not found</h1>
-        <p>The article you're looking for doesn't exist or has been removed.</p>
+        <p>The article you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+
       </div>
     )
   }

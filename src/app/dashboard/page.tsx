@@ -67,6 +67,15 @@ export default function DashboardPage() {
     }
   }, [user, loading])
 
+
+
+
+
+
+
+
+
+
   const handleDelete = async (articleId: string) => {
     try {
       await client.delete(articleId)
