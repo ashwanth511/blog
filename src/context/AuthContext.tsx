@@ -116,7 +116,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
     }
   }
-
   const signup = async (email: string, password: string, name: string) => {
     setLoading(true)
     try {
@@ -127,33 +126,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { name }
         }
       })
-
+  
       if (error) throw error
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user!.id,
+  
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            name,
+            email
+          })
+  
+        if (profileError) throw profileError
+  
+        await client.create({
+          _type: 'author',
+          _id: data.user.id,
           name,
-          email
+          email,
         })
-
-      if (profileError) throw profileError
-
-      await client.create({
-        _type: 'author',
-        _id: data.user!.id,
-        name,
-        email,
-      })
-
-      toast({
-        title: "Success",
-        description: "Account created successfully. Please verify your email.",
-      })
-      
-      router.push('/dashboard')
-      return { data: { user: data.user }, error: null }
+  
+        const userWithProfile = {
+          ...data.user,
+          profile: {
+            id: data.user.id,
+            name,
+            email
+          }
+        }
+  
+        toast({
+          title: "Success",
+          description: "Account created successfully. Please verify your email.",
+        })
+        
+        router.push('/dashboard')
+        return { data: { user: userWithProfile }, error: null }
+      }
+  
+      return { data: { user: null }, error: null }
     } catch (error) {
       toast({
         title: "Error",
@@ -165,6 +177,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
     }
   }
+
+
+
 
   const logout = async () => {
     await supabase.auth.signOut()
