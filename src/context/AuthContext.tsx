@@ -178,7 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-
+//the logout f
 
 
   const logout = async () => {
