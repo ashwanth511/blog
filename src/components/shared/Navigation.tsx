@@ -20,7 +20,7 @@ export default function Navigation() {
     return (
       <nav className="border-b py-4">
         <div className="container mx-auto flex items-center justify-between">
-          <span className="text-xl font-bold">Blog</span>
+          <span className="text-xl font-bold">Blogsus</span>
           <div className="flex gap-4">
             <div className="w-24 h-10 bg-gray-200 rounded" />
             <div className="w-24 h-10 bg-gray-200 rounded" />
@@ -38,7 +38,7 @@ export default function Navigation() {
   return (
     <nav className="border-b py-4">
       <div className="container mx-auto flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold">Blog</Link>
+        <Link href="/" className="text-xl font-bold">Blogsus</Link>
         <div className="flex items-center gap-4">
           {loading ? (
             <div className="flex gap-4">
