@@ -160,7 +160,7 @@ export default async function Homepage() {
           <div className="max-w-2xl mx-auto text-center space-y-4">
             <h2 className="text-2xl font-semibold">Ready to Get Our New Stuff?</h2>
             <p className="text-zinc-300">
-              We'll listen to your needs, identify the best approach, and then create a bespoke smart TV charging solution that's right for you.
+              We&apos;ll listen to your needs, identify the best approach, and then create a bespoke smart TV charging solution that&apos;s right for you.
             </p>
             <div className="flex gap-2 max-w-md mx-auto">
               <Input placeholder="Your Email" className="bg-white/10 border-white/20" />
