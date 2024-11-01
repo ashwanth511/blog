@@ -38,8 +38,9 @@ export default async function ArticlePage({
       return (
         <div className="container mx-auto py-8 text-center">
           <h1 className="text-2xl font-bold">Article not found</h1>
-          <p>The article you're looking for doesn't exist or has been removed.</p>
-        </div>
+          <p>The article you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+       
+                          </div>
       )
     }
 
@@ -59,7 +60,7 @@ export default async function ArticlePage({
         )}
         <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
         <div className="text-gray-600 mb-8">
-          <p>By {article.author.name}</p>
+             <p>By {article.author.name}</p>
           <p>{new Date(article.publishedAt).toLocaleDateString()}</p>
           <p>{likes?.length || 0} likes</p>
         </div>
