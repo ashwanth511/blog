@@ -31,7 +31,7 @@ const getCategories = async () => {
 
 
 export default function WritePage() {
-  const { user} = useAuth()
+  const { user,loading} = useAuth()
   const { toast } = useToast()
   const router = useRouter()
   const [title, setTitle] = useState('')
@@ -41,7 +41,12 @@ export default function WritePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("")
-const [IsLoading]=useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+
+
+// const [IsLoading,setIsLoading]=useState(false)
+// const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -52,10 +57,15 @@ const [IsLoading]=useState(false)
   }, [])
 
   useEffect(() => {
-    if (!user) {
-      router.push('/')
+    if (!loading && !user) {
+      toast({
+        title: "Error",
+        description: "Please login to write articles",
+        variant: "destructive"
+      })
+      router.push('/login')
     }
-  }, [user, router])
+  }, [user, loading, router])
   
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
@@ -76,7 +86,13 @@ const [IsLoading]=useState(false)
     setImagePreviews(prev => prev.filter((_, i) => i !== index))
   }
 
-
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
+      </div>
+    )
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -86,9 +102,10 @@ const [IsLoading]=useState(false)
         description: "User not authenticated",
         variant: "destructive"
       })
+      router.push('/login')
       return
     }
-
+setIsSubmitting(true)
     try {
       const authorDoc = {
         _type: 'author',
@@ -155,9 +172,14 @@ const [IsLoading]=useState(false)
         description: "Failed to publish article.",
         variant: "destructive"
       })
+    } finally {
+      setIsSubmitting(false)
     }
+
+
+
   }
-  if(IsLoading){
+ 
 
   return (
     <div className="container mx-auto max-w-2xl py-16">
@@ -259,8 +281,8 @@ const [IsLoading]=useState(false)
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              Publish Article
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Publishing..." : "Publish Article"}
             </Button>
           </form>
         </CardContent>
@@ -268,4 +290,4 @@ const [IsLoading]=useState(false)
     </div>
   )
 }
-}
+

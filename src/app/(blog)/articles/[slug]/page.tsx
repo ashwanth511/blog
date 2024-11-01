@@ -3,8 +3,6 @@ import { urlFor } from '@/sanity/lib/image'
 import { PortableText } from '@portabletext/react'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
-import { Metadata } from 'next'
-
 
 async function getArticle(slug: string) {
   const query = `*[_type == "post" && slug.current == $slug][0]{
@@ -23,15 +21,10 @@ async function getArticle(slug: string) {
 
 
 
-export interface PageProps{
-  params: { slug: string }
-  searchParams?: { [key: string]: string | string[] | undefined }
+export default async function ArticlePage({ params}: {params: {slug: string}}) {
 
-
-}
-
-export default async function ArticlePage({ params}: PageProps) {
-  const supabase = createServerComponentClient({ cookies })
+  const cookiesStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () =>cookiesStore })
   const article = await getArticle(params.slug)
   if (!article || !article.author) {
     return (

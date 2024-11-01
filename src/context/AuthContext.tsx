@@ -30,61 +30,54 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-
-  const [mounted, setMounted] = useState(false)
-  const [user, setUser] = useState<(User & { profile: any }) | null>(null)
+  const [user, setUser] = useState<UserWithProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { toast } = useToast()
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-        
-        setUser({ ...session.user, profile: profileData })
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-
-
-  useEffect(() => {
-    const initAuth = async () => {
+    const initializeAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.user) {
-          const { data: profileData } = await supabase
+          const { data: profile } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single()
-          setUser({ ...session.user, profile: profileData })
+          
+          setUser({ ...session.user, profile })
         }
       } catch (error) {
         console.error('Auth initialization error:', error)
       } finally {
         setLoading(false)
-        setMounted(true)
       }
     }
-    initAuth()
+
+    initializeAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
+          
+          setUser({ ...session.user, profile })
+        } else {
+          setUser(null)
+        }
+        setLoading(false)
+      }
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
-
-
-
-
-
-
 
   const login = async (email: string, password: string) => {
     setLoading(true)
@@ -105,16 +98,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userWithProfile = {...data.user, profile: profileData}
       setUser(userWithProfile)
 
-     
-
-      await router.push('/dashboard')
-
-      
-      return { data: { user: userWithProfile }, error: null }
       toast({
         title: "Success",
         description: "Logged in successfully",
       })
+
+      await router.push('/dashboard')
+      return { data: { user: userWithProfile }, error: null }
     } catch (error) {
       toast({
         title: "Error",
@@ -127,8 +117,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-
   const signup = async (email: string, password: string, name: string) => {
+    setLoading(true)
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -171,6 +161,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         variant: "destructive"
       })
       return { data: null, error: error as AuthError }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -182,7 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
-      {mounted && children}
+      {children}
     </AuthContext.Provider>
   )
 }
