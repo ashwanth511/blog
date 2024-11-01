@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
+import { formatDate } from '@/lib/utils'
 
 interface Article {
   _id: string;
@@ -122,7 +123,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-500">
-                  Published: {new Date(article.publishedAt).toLocaleDateString()}
+                  Published: {formatDate(article.publishedAt)}
                 </p>
                 {article.categories && (
                   <div className="flex gap-2 mt-2">

@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-
+import { formatDate } from '@/lib/utils'
 interface ArticleCardProps {
   article: {
     title: string
@@ -21,7 +21,8 @@ export default function ArticleCard({ article }: ArticleCardProps) {
       <CardContent>
         <p className="text-sm text-gray-500">By {article.author}</p>
         <p className="text-sm text-gray-500">
-          {new Date(article.publishedAt).toISOString().split('T')[0]}
+          {/* {new Date(article.publishedAt).toISOString().split('T')[0]} */}
+          {formatDate(article.publishedAt)}
         </p>
       </CardContent>
     </Card>
