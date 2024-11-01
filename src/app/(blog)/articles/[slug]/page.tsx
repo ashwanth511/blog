@@ -1,11 +1,12 @@
-
 import { formatDate } from '@/lib/utils'
 import { client } from '@/sanity/lib/client'
 import { urlFor } from '@/sanity/lib/image'
 import { PortableText } from '@portabletext/react'
+import { notFound } from 'next/navigation'
 
 async function getArticle(slug: string) {
   const query = `*[_type == "post" && slug.current == $slug][0]{
+    _id,
     title,
     content,
     publishedAt,
@@ -16,25 +17,24 @@ async function getArticle(slug: string) {
     },
     "likes": count(*[_type == "like" && article._ref == ^._id])
   }`
-  return client.fetch(query, { slug })
+  try {
+    return await client.fetch(query, { slug })
+  } catch (error) {
+    console.error('Error fetching article:', error)
+    return null
+  }
 }
 
-export default async function ArticlePage({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const { slug } = await params;
+interface PageProps {
+  params: Promise<{ slug: string }>
+}
 
-  const article = await getArticle(slug);
+export default async function ArticlePage({ params }: PageProps) {
+  const resolvedParams = await params
+  const article = await getArticle(resolvedParams.slug)
 
   if (!article || !article.author) {
-    return (
-      <div className="container mx-auto py-8 text-center">
-        <h1 className="text-2xl font-bold">Article not found</h1>
-        <p>The article you&apos;re looking for doesn&apos;t exist or has been removed.</p>
-      </div>
-    )
+    notFound()
   }
 
   return (
